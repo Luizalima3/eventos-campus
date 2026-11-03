@@ -1,12 +1,10 @@
 # Sistema de Inscrições para Eventos do Campus
 
-Projeto Django desenvolvido para a atividade **Ponto Extra II** da disciplina de RAD (IFPB).
-
 Um evento reúne várias atividades (palestras, treinamentos, apresentações). Cada atividade acontece em uma sala, em um horário, e a capacidade da sala limita o número de inscritos.
 
 ## Integrantes
 
-- **Luiz Antonio Lima** (e demais integrantes, editar aqui)
+- **Maria Luiza**
 
 ## Como rodar
 

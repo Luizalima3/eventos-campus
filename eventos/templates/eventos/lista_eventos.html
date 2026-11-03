@@ -9,19 +9,21 @@
   </form>
 </div>
 {% for evento in eventos %}
-  <div class="card">
-    <h2>{{ evento.nome }}
-      {% if evento.inscricoes_abertas %}
-        <span class="tag">Inscrições abertas</span>
-      {% else %}
-        <span class="tag tag-fechado">Inscrições encerradas</span>
-      {% endif %}
-    </h2>
-    <p>{{ evento.descricao|linebreaksbr }}</p>
-    <p><strong>Período:</strong> {{ evento.inicio|date:'d/m/Y' }} a {{ evento.fim|date:'d/m/Y' }}</p>
-    <a class="btn btn-primario" href="{% url 'detalhe_evento' evento.pk %}">Ver programação</a>
-  </div>
+<div class="card">
+  <h2>{{ evento.nome }}
+    {% if evento.inscricoes_abertas %}
+    <span class="tag">Inscrições abertas</span>
+    {% else %}
+    <span class="tag tag-fechado">Inscrições encerradas</span>
+    {% endif %}
+  </h2>
+  <p>{{ evento.descricao|linebreaksbr }}</p>
+  <p><strong>Período:</strong> {{ evento.inicio|date:'d/m/Y' }} a {{ evento.fim|date:'d/m/Y' }}</p>
+  <a class="btn btn-primario" href="{% url 'detalhe_evento' evento.pk %}">Ver programação</a>
+</div>
 {% empty %}
-  <div class="card"><p>Nenhum evento encontrado.</p></div>
+<div class="card">
+  <p>Nenhum evento encontrado.</p>
+</div>
 {% endfor %}
 {% endblock %}

@@ -6,24 +6,31 @@
 <div class="card">
   <h2>Inscrições em eventos</h2>
   <table>
-    <tr><th>Evento</th><th>Período</th><th>Inscrito em</th><th></th></tr>
+    <tr>
+      <th>Evento</th>
+      <th>Período</th>
+      <th>Inscrito em</th>
+      <th></th>
+    </tr>
     {% for ie in inscricoes_evento %}
-      <tr>
-        <td><a href="{% url 'detalhe_evento' ie.evento.pk %}">{{ ie.evento.nome }}</a></td>
-        <td>{{ ie.evento.inicio|date:'d/m/Y' }} – {{ ie.evento.fim|date:'d/m/Y' }}</td>
-        <td>{{ ie.data|date:'d/m/Y H:i' }}</td>
-        <td>
-          <form method="post" action="{% url 'cancelar_inscricao_evento' ie.evento.pk %}" class="inline-form">
-            {% csrf_token %}
-            <button class="btn btn-perigo" type="submit"
-                    onclick="return confirm('Cancelar o evento inteiro? Você sairá de todas as atividades dele.')">
-              Cancelar evento
-            </button>
-          </form>
-        </td>
-      </tr>
+    <tr>
+      <td><a href="{% url 'detalhe_evento' ie.evento.pk %}">{{ ie.evento.nome }}</a></td>
+      <td>{{ ie.evento.inicio|date:'d/m/Y' }} – {{ ie.evento.fim|date:'d/m/Y' }}</td>
+      <td>{{ ie.data|date:'d/m/Y H:i' }}</td>
+      <td>
+        <form method="post" action="{% url 'cancelar_inscricao_evento' ie.evento.pk %}" class="inline-form">
+          {% csrf_token %}
+          <button class="btn btn-perigo" type="submit"
+            onclick="return confirm('Cancelar o evento inteiro? Você sairá de todas as atividades dele.')">
+            Cancelar evento
+          </button>
+        </form>
+      </td>
+    </tr>
     {% empty %}
-      <tr><td colspan="4">Você não está inscrito em nenhum evento.</td></tr>
+    <tr>
+      <td colspan="4">Você não está inscrito em nenhum evento.</td>
+    </tr>
     {% endfor %}
   </table>
 </div>
@@ -31,22 +38,30 @@
 <div class="card">
   <h2>Atividades em que estou inscrito</h2>
   <table>
-    <tr><th>Data e hora</th><th>Atividade</th><th>Evento</th><th>Sala</th><th></th></tr>
+    <tr>
+      <th>Data e hora</th>
+      <th>Atividade</th>
+      <th>Evento</th>
+      <th>Sala</th>
+      <th></th>
+    </tr>
     {% for ia in inscricoes_atividade %}
-      <tr>
-        <td>{{ ia.atividade.inicio|date:'d/m/Y H:i' }} – {{ ia.atividade.fim|date:'H:i' }}</td>
-        <td>{{ ia.atividade.titulo }} <span class="tag">{{ ia.atividade.get_tipo_display }}</span></td>
-        <td>{{ ia.atividade.evento.nome }}</td>
-        <td>{{ ia.atividade.sala }}</td>
-        <td>
-          <form method="post" action="{% url 'cancelar_inscricao_atividade' ia.atividade.pk %}" class="inline-form">
-            {% csrf_token %}
-            <button class="btn btn-perigo" type="submit">Cancelar</button>
-          </form>
-        </td>
-      </tr>
+    <tr>
+      <td>{{ ia.atividade.inicio|date:'d/m/Y H:i' }} – {{ ia.atividade.fim|date:'H:i' }}</td>
+      <td>{{ ia.atividade.titulo }} <span class="tag">{{ ia.atividade.get_tipo_display }}</span></td>
+      <td>{{ ia.atividade.evento.nome }}</td>
+      <td>{{ ia.atividade.sala }}</td>
+      <td>
+        <form method="post" action="{% url 'cancelar_inscricao_atividade' ia.atividade.pk %}" class="inline-form">
+          {% csrf_token %}
+          <button class="btn btn-perigo" type="submit">Cancelar</button>
+        </form>
+      </td>
+    </tr>
     {% empty %}
-      <tr><td colspan="5">Nenhuma atividade escolhida ainda.</td></tr>
+    <tr>
+      <td colspan="5">Nenhuma atividade escolhida ainda.</td>
+    </tr>
     {% endfor %}
   </table>
 </div>
