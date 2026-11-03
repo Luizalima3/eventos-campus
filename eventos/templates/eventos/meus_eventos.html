@@ -1,0 +1,25 @@
+{% extends 'eventos/base.html' %}
+{% block titulo %}Meus eventos{% endblock %}
+{% block conteudo %}
+<div class="card">
+  <h1>Meus eventos <small>(painel do organizador)</small></h1>
+  <a class="btn btn-primario" href="{% url 'criar_evento' %}">+ Novo evento</a>
+</div>
+{% for evento in eventos %}
+  <div class="card">
+    <h3>{{ evento.nome }}
+      {% if evento.inscricoes_abertas %}<span class="tag">Aberto</span>{% else %}<span class="tag tag-fechado">Fechado</span>{% endif %}
+    </h3>
+    <p>{{ evento.inicio|date:'d/m/Y' }} a {{ evento.fim|date:'d/m/Y' }} ·
+       {{ evento.atividades.count }} atividade(s) · {{ evento.inscricoes.count }} inscrito(s)</p>
+    <a class="btn btn-primario" href="{% url 'detalhe_evento' evento.pk %}">Abrir</a>
+    <a class="btn btn-neutro" href="{% url 'editar_evento' evento.pk %}">Editar</a>
+    <form method="post" action="{% url 'excluir_evento' evento.pk %}" class="inline-form">
+      {% csrf_token %}
+      <button class="btn btn-perigo" type="submit" onclick="return confirm('Excluir este evento?')">Excluir</button>
+    </form>
+  </div>
+{% empty %}
+  <div class="card"><p>Você ainda não organizou nenhum evento.</p></div>
+{% endfor %}
+{% endblock %}

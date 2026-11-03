@@ -1,0 +1,94 @@
+{% extends 'eventos/base.html' %}
+{% block titulo %}{{ evento.nome }}{% endblock %}
+{% block conteudo %}
+<div class="card">
+  <h1>{{ evento.nome }}
+    {% if evento.inscricoes_abertas %}
+    <span class="tag">Inscrições abertas</span>
+    {% else %}
+    <span class="tag tag-fechado">Inscrições encerradas</span>
+    {% endif %}
+  </h1>
+  <p>{{ evento.descricao|linebreaksbr }}</p>
+  <p><strong>Período:</strong> {{ evento.inicio|date:'d/m/Y' }} a {{ evento.fim|date:'d/m/Y' }}
+    &nbsp;|&nbsp; <strong>Organizador:</strong> {{ evento.organizador.username }}</p>
+
+  {% if user.is_authenticated %}
+  {% if inscricao %}
+  <form method="post" action="{% url 'cancelar_inscricao_evento' evento.pk %}" class="inline-form">
+    {% csrf_token %}
+    <button class="btn btn-perigo" type="submit"
+      onclick="return confirm('Cancelar a inscrição no evento? Você sairá também de todas as atividades dele.')">
+      Cancelar inscrição no evento
+    </button>
+  </form>
+  <span>Você está inscrito neste evento.</span>
+  {% else %}
+  {% if evento.inscricoes_abertas %}
+  <form method="post" action="{% url 'inscrever_evento' evento.pk %}" class="inline-form">
+    {% csrf_token %}
+    <button class="btn btn-sucesso" type="submit">Inscrever-se no evento</button>
+  </form>
+  {% endif %}
+  {% endif %}
+  {% if evento.organizador == user %}
+  <a class="btn btn-neutro" href="{% url 'editar_evento' evento.pk %}">Editar</a>
+  <form method="post" action="{% url 'excluir_evento' evento.pk %}" class="inline-form">
+    {% csrf_token %}
+    <button class="btn btn-perigo" type="submit" onclick="return confirm('Excluir este evento?')">Excluir</button>
+  </form>
+  {% endif %}
+  {% else %}
+  <a class="btn btn-sucesso" href="{% url 'login' %}">Entrar para se inscrever</a>
+  {% endif %}
+</div>
+
+<h2>Programação</h2>
+{% for atividade in atividades %}
+<div class="card">
+  <h3>{{ atividade.titulo }} <span class="tag">{{ atividade.get_tipo_display }}</span>
+    {% if atividade.lotada %}<span class="tag tag-lotado">Lotada</span>{% endif %}
+  </h3>
+  <p>{{ atividade.descricao|linebreaksbr }}</p>
+  <p>
+    <strong>Responsável:</strong> {{ atividade.responsavel }}<br>
+    <strong>Sala:</strong> {{ atividade.sala }} &nbsp;|&nbsp;
+    <strong>Horário:</strong> {{ atividade.inicio|date:'d/m/Y H:i' }} – {{ atividade.fim|date:'H:i' }}<br>
+    <strong>Vagas restantes:</strong> {{ atividade.vagas_restantes }} de {{ atividade.sala.capacidade }}
+  </p>
+
+  {% if inscricao %}
+  {% if atividade in inscricao.inscricoes_atividades.all %}
+  <form method="post" action="{% url 'cancelar_inscricao_atividade' atividade.pk %}" class="inline-form">
+    {% csrf_token %}
+    <button class="btn btn-perigo" type="submit">Cancelar minha inscrição nesta atividade</button>
+  </form>
+  {% elif atividade.lotada %}
+  <button class="btn btn-neutro" disabled>Lotada</button>
+  {% else %}
+  <form method="post" action="{% url 'inscrever_atividade' atividade.pk %}" class="inline-form">
+    {% csrf_token %}
+    <button class="btn btn-sucesso" type="submit">Inscrever-se na atividade</button>
+  </form>
+  {% endif %}
+  {% endif %}
+
+  {% if evento.organizador == user %}
+  <a class="btn btn-neutro" href="{% url 'editar_atividade' atividade.pk %}">Editar</a>
+  <a class="btn btn-neutro" href="{% url 'participantes_atividade' atividade.pk %}">Participantes</a>
+  <form method="post" action="{% url 'excluir_atividade' atividade.pk %}" class="inline-form">
+    {% csrf_token %}
+    <button class="btn btn-perigo" type="submit" onclick="return confirm('Excluir esta atividade?')">Excluir</button>
+  </form>
+  {% endif %}
+</div>
+{% empty %}
+<div class="card">
+  <p>Nenhuma atividade cadastrada.</p>
+</div>
+{% endfor %}
+
+{% if evento.organizador == user %}
+<a class="btn btn-primario" href="{% url 'criar_atividade' evento.pk %}">+ Nova atividade</a>
+{% endif %}
+{% endblock %}

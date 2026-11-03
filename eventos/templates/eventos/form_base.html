@@ -1,0 +1,15 @@
+{% extends 'eventos/base.html' %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block conteudo %}
+<div class="card">
+  <h1>{{ titulo }}</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="acoes-form">
+      <button class="btn btn-primario" type="submit">Salvar</button>
+      <a class="btn btn-neutro" href="{{ request.META.HTTP_REFERER|default:'/' }}">Voltar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

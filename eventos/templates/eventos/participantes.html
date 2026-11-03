@@ -1,0 +1,27 @@
+{% extends 'eventos/base.html' %}
+{% block titulo %}Participantes — {{ atividade.titulo }}{% endblock %}
+{% block conteudo %}
+<div class="card">
+  <h1>{{ atividade.titulo }}</h1>
+  <p>{{ atividade.evento.nome }} · Sala {{ atividade.sala }} ·
+     {{ atividade.inicio|date:'d/m/Y H:i' }} – {{ atividade.fim|date:'H:i' }}</p>
+  <p><strong>Total de inscritos:</strong> {{ inscricoes.count }} ·
+     <strong>Vagas restantes:</strong> {{ atividade.vagas_restantes }} de {{ atividade.sala.capacidade }}</p>
+</div>
+<div class="card">
+  <h2>Inscritos</h2>
+  <table>
+    <tr><th>#</th><th>Participante</th><th>Inscrito em</th></tr>
+    {% for ia in inscricoes %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ ia.inscricao_evento.participante.username }}
+            ({{ ia.inscricao_evento.participante.first_name }})</td>
+        <td>{{ ia.data|date:'d/m/Y H:i' }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="3">Nenhum inscrito ainda.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'eventos/base.html' %}
+{% block titulo %}Confirmar exclusão{% endblock %}
+{% block conteudo %}
+<div class="card">
+  <h1>Confirmar exclusão</h1>
+  <p>Excluir {{ tipo }}: <strong>{{ objeto }}</strong>? Esta ação não pode ser desfeita.</p>
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn btn-perigo" type="submit">Excluir</button>
+    <a class="btn btn-neutro" href="{% url 'meus_eventos' %}">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

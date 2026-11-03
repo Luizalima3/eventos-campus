@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Eventos do Campus{% endblock %}</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f6f8; color: #222; }
+header { background: #1a3c6e; color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+header a { color: #dce6f5; text-decoration: none; font-weight: 500; }
+header a:hover { color: #fff; }
+header .marca { color: #fff; font-size: 1.2rem; font-weight: 700; margin-right: 12px; }
+header .espaco { flex: 1; }
+main { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+.card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 18px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size: 1.5rem; margin: 0 0 14px; }
+h2 { font-size: 1.2rem; margin: 0 0 10px; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+th, td { padding: 8px 10px; border-bottom: 1px solid #e5e9ef; text-align: left; }
+th { background: #f8fafc; font-weight: 600; }
+.btn { display: inline-block; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; font-size: .95rem; font-weight: 500; }
+.btn-primario { background: #1a3c6e; color: #fff; }
+.btn-perigo { background: #b03a3a; color: #fff; }
+.btn-neutro { background: #e5e9ef; color: #222; }
+.btn-livre { background: #3a7d44; color: #fff; }
+.btn-desabilitado { background: #c9c9c9; color: #888; cursor: not-allowed; }
+.form-acoes { margin-top: 16px; }
+.mensagem { padding: 12px 18px; border-radius: 6px; margin-bottom: 14px; }
+.mensagem-erro { background: #fbe4e4; color: #8a2a2a; }
+.mensagem-sucesso { background: #e4f4e6; color: #2a6a34; }
+.mensagem-info { background: #e4ecf4; color: #2a4a6a; }
+.rodape { text-align: center; color: #666; padding: 24px; font-size: .85rem; }
+.papel { color: #f0c674; font-weight: 600; }
+table.acoes td { border-bottom: none; padding: 6px 8px; }
+.mensagem-titulo { font-weight: 600; }
+.mensagem-corpo { font-size: .9rem; color: #555; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: .8rem; }
+.badge-livre { background: #d4ecd8; color: #2a6a34; }
+.badge-lotado { background: #f4d4d4; color: #8a2a2a; }
+.badge-aberto { background: #d8e4f4; color: #2a4a6a; }
+.badge-fechado { background: #f0e4d0; color: #6a4a2a; }
+</style>
+</head>
+<body>
+<header>
+  <a class="marca" href="{% url 'lista_eventos' %}">Eventos do Campus</a>
+  <a href="{% url 'lista_eventos' %}">Eventos</a>
+  {% if request.user.is_authenticated %}
+    <a href="{% url 'minha_agenda' %}">Minha agenda</a>
+    <a href="{% url 'meus_eventos' %}">Painel do organizador</a>
+  {% endif %}
+  <span class="espaco"></span>
+  {% if request.user.is_authenticated %}
+    <span>Olá, {{ request.user.username }} <span class="papel">[participante/organizador]</span></span>
+    <a href="{% url 'logout' %}">Sair</a>
+  {% else %}
+    <a href="{% url 'login' %}">Entrar</a>
+    <a href="{% url 'cadastro' %}">Criar conta</a>
+  {% endif %}
+</header>
+<main>
+  {% for mensagem in messages %}
+    <div class="mensagem {% if mensagem.tags == 'error' %}mensagem-erro{% elif mensagem.tags == 'success' %}mensagem-sucesso{% else %}mensagem-info{% endif %}">
+      {{ mensagem }}
+    </div>
+  {% endfor %}
+  {% block conteudo %}{% endblock %}
+</main>
+<div class="rodape">Sistema de inscrições em eventos do campus · Trabalho de Programação</div>
+</body>
+</html>

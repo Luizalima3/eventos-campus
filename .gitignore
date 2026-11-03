@@ -1,0 +1,10 @@
+# Ambiente virtual
+.venv/
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# OBSERVAÇÃO: o db.sqlite3 ESTÁ versionado de propósito nesta entrega,
+# para que o professor possa reproduzir os testes com os dados já cadastrados.
+# Em um projeto real ele ficaria fora do controle de versão.
