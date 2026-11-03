@@ -10,6 +10,7 @@ from django.views.generic import UpdateView
 
 from .forms import EventoForm, AtividadeForm
 from .models import Evento, Atividade, InscricaoEvento, InscricaoAtividade
+from .services import inscrever_em_atividade
 
 
 # ---------------------------------------------------------------------------
@@ -83,37 +84,13 @@ def inscrever_atividade(request, pk):
     if request.method != 'POST':
         return redirect('detalhe_evento', pk=evento.pk)
 
-    # RN4: só quem já está inscrito no evento.
-    inscricao = InscricaoEvento.objects.filter(
-        evento=evento, participante=request.user
-    ).first()
-    if inscricao is None:
-        messages.error(request, 'Você precisa estar inscrito no evento para escolher atividades.')
+    # RN1, RN2 e RN4 vivem em services.inscrever_em_atividade — único lugar
+    # onde existem; a API (eventos/api) chama a mesma função.
+    _, erro = inscrever_em_atividade(request.user, atividade)
+    if erro is not None:
+        messages.error(request, erro.message)
         return redirect('detalhe_evento', pk=evento.pk)
 
-    if atividade.lotada():  # RN1: capacidade vem da sala, por relacionamento
-        messages.error(request, 'Atividade lotada: todas as vagas da sala já foram ocupadas.')
-        return redirect('detalhe_evento', pk=evento.pk)
-
-    if InscricaoAtividade.objects.filter(inscricao_evento=inscricao, atividade=atividade).exists():
-        messages.info(request, 'Você já está inscrito nesta atividade.')
-        return redirect('detalhe_evento', pk=evento.pk)
-
-    # RN2: conflito com QUALQUER atividade do participante, inclusive de outros eventos.
-    conflitos = Atividade.objects.filter(
-        inscricoes__inscricao_evento__participante=request.user,
-        inicio__lt=atividade.fim,
-        fim__gt=atividade.inicio,
-    )
-    if conflitos.exists():
-        nomes = ', '.join(a.titulo for a in conflitos)
-        messages.error(
-            request,
-            f'Conflito de horário: você já está inscrito em "{nomes}", que acontece no mesmo horário.'
-        )
-        return redirect('detalhe_evento', pk=evento.pk)
-
-    InscricaoAtividade.objects.create(inscricao_evento=inscricao, atividade=atividade)
     messages.success(request, f'Inscrição em "{atividade.titulo}" realizada!')
     return redirect('detalhe_evento', pk=evento.pk)
 
