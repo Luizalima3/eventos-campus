@@ -16,6 +16,11 @@ class Sala(models.Model):
     def __str__(self):
         return f'{self.nome} (bloco {self.bloco})'
 
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.capacidade is not None and self.capacidade < 0:
+            raise ValidationError('A capacidade não pode ser negativa.')
+
 
 class Evento(models.Model):
     nome = models.CharField(max_length=150)
@@ -35,6 +40,11 @@ class Evento(models.Model):
 
     def __str__(self):
         return self.nome
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.fim and self.inicio and self.fim < self.inicio:
+            raise ValidationError('A data de fim não pode vir antes da de início.')
 
 
 class Atividade(models.Model):
@@ -68,6 +78,16 @@ class Atividade(models.Model):
 
     def __str__(self):
         return f'{self.titulo} — {self.evento.nome}'
+
+    def clean(self):
+        # Validações de nível de model (RF4): delegam ao serviço único.
+        from .services import validar_atividade
+        from django.core.exceptions import ValidationError
+        if self.evento_id and self.sala_id:
+            erros = validar_atividade(self.inicio, self.fim, self.sala,
+                                      evento=self.evento, instance=self)
+            if erros:
+                raise ValidationError(erros)
 
     def inscritos_count(self):
         return self.inscricoes.count()

@@ -8,3 +8,7 @@ __pycache__/
 # OBSERVAÇÃO: o db.sqlite3 ESTÁ versionado de propósito nesta entrega,
 # para que o professor possa reproduzir os testes com os dados já cadastrados.
 # Em um projeto real ele ficaria fora do controle de versão.
+
+# Relatório de cobertura (gerado localmente)
+.coverage
+htmlcov/
