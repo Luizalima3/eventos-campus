@@ -1,6 +1,7 @@
 from django import forms
 
 from .models import Evento, Atividade
+from .services import validar_atividade
 
 
 class EventoForm(forms.ModelForm):
@@ -49,29 +50,11 @@ class AtividadeForm(forms.ModelForm):
         fim = cleaned.get('fim')
         sala = cleaned.get('sala')
 
-        if fim and inicio and fim < inicio:
-            raise forms.ValidationError('O fim não pode vir antes do início.')
-
-        # A atividade precisa acontecer dentro do período do evento.
-        evento = self.evento_inicial
-        if evento and inicio and fim:
-            if inicio.date() < evento.inicio or fim.date() > evento.fim:
-                raise forms.ValidationError(
-                    'A atividade precisa acontecer dentro do período do evento '
-                    f'({evento.inicio.strftime("%d/%m/%Y")} a {evento.fim.strftime("%d/%m/%Y")}).'
-                )
-
-            # RN3: sala ocupada — contra TODAS as atividades, de qualquer evento.
-            conflito = Atividade.objects.filter(
-                sala=sala,
-                inicio__lt=fim,
-                fim__gt=inicio,
-            )
-            if self.instance.pk:
-                conflito = conflito.exclude(pk=self.instance.pk)
-            if conflito.exists():
-                nomes = ', '.join(a.titulo for a in conflito)
-                raise forms.ValidationError(
-                    f'A sala {sala.nome} já está ocupada nesse horário (atividade: {nomes}).'
-                )
+        # Regra única em services.validar_atividade — também usada pela API.
+        erros = validar_atividade(
+            sala=sala, inicio=inicio, fim=fim,
+            evento=self.evento_inicial, instance=self.instance,
+        )
+        for erro in erros:
+            raise forms.ValidationError(erro)
         return cleaned
